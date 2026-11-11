@@ -272,8 +272,14 @@ def branch_nav(b, active_file):
 </nav>
 '''
 
-def footer(depth):
+def footer(depth, branch=None):
     p = "../" * depth
+    # Instagram icon(s): the current branch's account on branch pages, both accounts elsewhere
+    ig_keys = [branch] if branch else BRANCH_ORDER
+    ig_icons = "".join(
+        f'<a class="social" href="{BRANCHES[k]["instagram"]}" target="_blank" rel="noopener" '
+        f'aria-label="Instagram {esc(BRANCHES[k]["name"][0])}" title="Instagram – {esc(BRANCHES[k]["short"][0])}">{icon("instagram")}</a>'
+        for k in ig_keys)
     cols = ""
     for key in BRANCH_ORDER:
         b = BRANCHES[key]
@@ -295,7 +301,7 @@ def footer(depth):
     <p class="muted" style="max-width:34ch;margin:0 0 20px">{t("Built for Strength. Driven by Excellence.", "صُنع للقوة. مدفوع بالتميّز.")}</p>
     <div class="socials">
      <a class="social" href="{FACEBOOK}" target="_blank" rel="noopener" aria-label="Facebook">{icon("facebook")}</a>
-     <a class="social" href="{BRANCHES["khalda"]["instagram"]}" target="_blank" rel="noopener" aria-label="Instagram Khalda">{icon("instagram")}</a>
+     {ig_icons}
     </div>
    </div>
    {cols}
@@ -338,7 +344,7 @@ def page(path, depth, active, title, desc, body, branch=None, sub=None, og="khal
     out += f"<body{body_cls}>\n" + header(depth, active)
     if branch:
         out += branch_nav(BRANCHES[branch], sub)
-    out += "<main>\n" + body + "</main>\n" + footer(depth) + wa_float(branch)
+    out += "<main>\n" + body + "</main>\n" + footer(depth, branch) + wa_float(branch)
     out += f'<script src="{p}assets/js/main.js" defer></script>\n</body>\n</html>\n'
     full = os.path.join(ROOT, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
